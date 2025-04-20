@@ -28,5 +28,3 @@ def criar_conta (nome, login, senha, saldo_inicial=0):
   querys.close()
   con.close()
   
-
-criar_conta('Guilhermes', 'guilherme', '12356', 0)
