@@ -1,6 +1,6 @@
 from conexao_bd import conectar_bd
 
-def deposito (cont_numero, deposito):
+def deposito (cont_numero:int, deposito):
 
   con = conectar_bd()
   querys = con.cursor()
