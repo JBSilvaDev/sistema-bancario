@@ -1,4 +1,4 @@
-from conexao_bd import conectar_bd
+from conexao_bd import conectar_bd, login
 
 def deposito (cont_numero:int, deposito):
 
@@ -7,14 +7,8 @@ def deposito (cont_numero:int, deposito):
 
   
   try:
-    print(f'Acessando conta {cont_numero}...')
-    querys.execute('SELECT * FROM contas WHERE id = ?', (cont_numero,))
-    conta = querys.fetchone()
+    conta = login(cont_numero)
 
-    if conta is None:
-      print('Conta inexistente.')
-      return
-    
     if deposito <= 0:
       print('Valor de depósito inválido.')
       return
@@ -22,6 +16,7 @@ def deposito (cont_numero:int, deposito):
     querys.execute('''
                  UPDATE contas SET saldo = saldo + ? WHERE id = ?
                  ''', (deposito, cont_numero))
+    print(f'Depósito de R$ {deposito:.2f} realizado com sucesso!')
   except:
     print('Erro ao acessar o banco de dados.')
     return

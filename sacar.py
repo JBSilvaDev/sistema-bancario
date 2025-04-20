@@ -1,4 +1,4 @@
-from conexao_bd import conectar_bd
+from conexao_bd import conectar_bd, login
 
 def saque (cont_numero:int, senha, valor_saque:float):
 
@@ -7,13 +7,7 @@ def saque (cont_numero:int, senha, valor_saque:float):
 
   
   try:
-    print(f'Acessando conta {cont_numero}...')
-    querys.execute('SELECT * FROM contas WHERE id = ? AND senha = ?', (cont_numero, senha, ))
-    conta = querys.fetchone()
-
-    if conta is None:
-      print('Conta inexistente.')
-      return
+    conta = login(cont_numero, senha)
     
     # Verifica o saldo da conta
     if conta[3] < valor_saque or valor_saque <= 0:
