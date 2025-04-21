@@ -58,6 +58,12 @@ Este é um projeto de um sistema bancário simples desenvolvido em Python, utili
 ### Estrutura do Banco de Dados
 > Tabela `contas`:
 - `id` (INTEGER): Identificador único da conta.
+- `agencia` (TEXT): Número da agência, padrão "0001".
 - `nome` (TEXT): Nome do titular da conta.
 - `senha` (TEXT): Senha da conta.
-- `saldo` (REAL): Saldo atual da conta.
+- `saldo` (REAL): Saldo inicial da conta.
+- `saques_dia` (INTEGER): Contador de saques diários.
+- `data_nascimento` (TEXT): Data de nascimento do titular da conta.
+- `cpf` (TEXT): CPF do titular da conta.
+- `endereco` (TEXT): Endereço do titular da conta.
+- `historico` (TEXT): Histórico de transações da conta.

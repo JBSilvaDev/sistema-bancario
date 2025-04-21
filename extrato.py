@@ -1,19 +1,19 @@
 from conexao_bd import conectar_bd, login
 import utils
 
-def extrato_conta (cont_numero:int, senha):
+def extrato_conta (agencia:str, cont_numero:int,/,*, senha):
 
   con = conectar_bd()
   querys = con.cursor()
 
   
   try:
-    conta = login(cont_numero, senha)
+    conta = login(agencia, cont_numero, senha)
     print("="*50)
-    print(f'Saldo atual: R$ {conta[3]:.2f}')
+    print(f'Saldo atual: R$ {conta[4]:.2f}')
     print("="*50)
 
-    historico = utils.str_para_mapa(conta[5])
+    historico = utils.str_para_mapa(conta[-1])
     print(historico)
     print("="*50)
 
