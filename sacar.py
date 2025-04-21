@@ -16,11 +16,10 @@ def saque (cont_numero:int, senha, valor_saque:float):
     if conta[3] < valor_saque or valor_saque <= 0:
       print('Saldo insuficiente. ou valor de saque inválido.')
       return
-    if conta[4] >= 3:
+    if conta[4] >= 5:
       historico_saques = utils.str_para_mapa(conta[5])
       saques = utils.filtro_extrato(historico_saques, 'Saque')
-
-      if (utils.compara_datas(saques['Data'].to_list()[-1])):
+      if (utils.compara_datas(saques['Data/Hora'].to_list()[-1])):
         print('Limite de saques diários atingido.')
         return
       else:
