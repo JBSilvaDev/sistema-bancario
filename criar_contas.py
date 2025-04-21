@@ -1,4 +1,6 @@
 from conexao_bd import conectar_bd
+from datetime import datetime
+import utils as convert
 
 def criar_conta (nome, senha, saldo_inicial=0):
 
@@ -9,14 +11,18 @@ def criar_conta (nome, senha, saldo_inicial=0):
     id INTEGER PRIMARY KEY AUTOINCREMENT, 
     nome TEXT NOT NULL, 
     senha TEXT NOT NULL,
-    saldo REAL NOT NULL
+    saldo REAL NOT NULL,
+    saques_dia INTEGER DEFAULT 0,
+    historico TEXT DEFAULT NULL
   )''')
 
   print('Criando conta...')
+
   querys.execute('''
-                  INSERT INTO contas (nome,  senha, saldo)
-                  VALUES (?, ?, ?)
-                  ''', (nome, senha, saldo_inicial))
+                  INSERT INTO contas (nome,  senha, saldo, saques_dia, historico)
+                  VALUES (?, ?, ?,?,?)
+                  ''', (nome, senha, saldo_inicial, 0, f"[{convert.mapa_para_str({'Criação de conta':convert.date_para_iso()})}]")
+                  )
   
   conta_id = querys.lastrowid
 
@@ -27,4 +33,3 @@ def criar_conta (nome, senha, saldo_inicial=0):
   con.commit()
   querys.close()
   con.close()
-  
