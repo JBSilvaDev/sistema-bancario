@@ -5,9 +5,13 @@ import pandas as pd
 class Utils:
   
   @staticmethod
-  def date_para_iso():
+  def data_para_iso():
     return datetime.now().isoformat()
 
+
+  @staticmethod
+  def texto_json( texto):
+    return json.loads(texto)
 
   @staticmethod
   def mapa_para_str( mapa):

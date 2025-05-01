@@ -2,7 +2,7 @@ from data.conexao_bd import DadosBanco
 from controller.banco_controler import Controle
 
 class Cliente:
-  def __init__(self,nome, senha, nascimento, cpf, endereco):
+  def __init__(self, nome=None, nascimento=None, endereco=None, /, *, cpf, senha):
     self.nome = nome
     self.senha = senha
     self.nascimento = nascimento
