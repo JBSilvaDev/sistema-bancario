@@ -1,4 +1,3 @@
-from encodings.punycode import T
 from criar_contas import criar_conta
 from depositar import deposito
 from sacar import saque
