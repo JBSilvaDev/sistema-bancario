@@ -1,10 +1,7 @@
-from multiprocessing import parent_process
 from models.agencia_conta import Conta
 from models.cliente import Cliente
 from data.conexao_bd import DadosBanco
 from models.agencia_conta import Conta
-from models.cliente import Cliente
-
 
 def verificar_cpf_existe(cpf):
     banco = DadosBanco()
@@ -54,10 +51,10 @@ def login():
     senha = input('Digite sua senha: ')
     obj_conta = conta_cliente(cpf, senha)
     auth = obj_conta.login(cliente=Cliente(cpf=cpf, senha=senha))
-    print('*'*15)
+    print('=='*20)
   else:
     print('CPF não cadastrado')
-    print('=='*15)
+    print('=='*20)
     resposta = input('Deseja criar nova conta? (s/n): ')
     if resposta == 'n':
       return None
@@ -65,6 +62,7 @@ def login():
         senha = input('Digite a senha de acesso: ')
         auth = cria_nova_conta(cpf, senha)
   return auth
+
 def deposito(auth=None):
 
   tipo_deposito = None
@@ -73,14 +71,15 @@ def deposito(auth=None):
 
   if auth is not None:
     tipo_deposito = input('Deposito para sua conta ou de terceiros? \n 1 - Minha conta \n 2 - Conta de terceiros \n R => ')
-    deposito_valor = float(input('Digite o valor a depositar: '))
     if tipo_deposito == '2':
       agencia = input('Digite o número da agência: ')
       cont_numero = int(input('Digite o número da conta: '))
+      deposito_valor = float(input('Digite o valor a depositar: '))
       obj_conta = conta_cliente()
       obj_conta.depositar(agencia, cont_numero, deposito_valor)
       return auth
     elif tipo_deposito == '1':
+      deposito_valor = float(input('Digite o valor a depositar: '))
       obj_conta = conta_cliente(auth['cpf'], auth['senha'])
       auth = obj_conta.depositar(auth['agencia'], auth['id'], deposito_valor, conta_auth=auth)
       return auth
@@ -128,9 +127,9 @@ def user_interface():
   resposta = inicio
 
   if inicio == 's':
-    print('=='*15)
+    print('=='*20)
     auth = login()
-    print('=='*15)
+    print('=='*20)
   
   loop = True
 
@@ -148,6 +147,9 @@ def user_interface():
     elif opcao == '3':
       auth = extrato(auth)
     elif opcao == '4':
+      print('=='*20)
+      print("Obrigado pela visita! Volte sempre!")
+      print('=='*20)
       loop = False
       
 

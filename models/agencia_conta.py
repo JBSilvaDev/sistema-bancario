@@ -1,9 +1,6 @@
 from abc import ABC, abstractmethod
-from calendar import c
-from http import client
 from data.conexao_bd import DadosBanco
 from models.cliente import Cliente
-from controller.banco_controler import Controle
 from utils.utilidades import Utils
 
 
@@ -100,7 +97,6 @@ class Conta(Agencia):
         senha = cliente.senha
         con = self.conectar_bd
         query = con.cursor()
-        print(cpf, senha,'*'*15)
 
         try:
             query.execute('''
@@ -112,7 +108,6 @@ class Conta(Agencia):
             
             
             conta = UTILS.tupla_para_dicionario(query.fetchone())
-            print('*'*15)
             if not conta is None:
                 if not e_reload:
                     print(f'Bem-vindo(a) {conta["nome"]}!')
@@ -121,7 +116,7 @@ class Conta(Agencia):
                 print('Conta inexistente ou senha incorreta.')
                 return None
         except Exception as e:
-            print(f"Erro ao autenticar usuário: {e}")
+            print(f"Autenticação atual falhou, refaça o login.\n {e}")
             return None
         finally:
             query.close()
@@ -188,8 +183,7 @@ class Conta(Agencia):
                     {f'Depósito - {valor_deposito:.2f}': UTILS.data_para_iso()}
                     )
                 novo_historico = UTILS.mapa_para_str(historico)
-                print('***'*10)
-                print((valor_deposito, novo_historico, conta_numero, agencia,))
+            
                 query.execute(
                     '''
                     UPDATE contas SET 
@@ -201,6 +195,7 @@ class Conta(Agencia):
                 )
                 con.commit()
                 print(f'Depósito de R$ {valor_deposito:.2f} realizado com sucesso!')
+                print('=='*20)
 
                 recarrega_conta = self.login(cliente, True)
                 conta_auth = recarrega_conta
@@ -208,7 +203,8 @@ class Conta(Agencia):
                 return conta_auth
                 
         except Exception as e:
-            print(f'Erro ao depositar: {e}')
+            print('Não foi possivel realizar depósito')
+            print('Verifique se os dados foram digitados corretamente.\n', e)
         finally:
             query.close()
             con.close()
@@ -217,7 +213,7 @@ class Conta(Agencia):
         con = self.conectar_bd
         query = con.cursor()
 
-        print('===='*10)
+        print('=='*20)
         print("Validando infomações de saque...")
         try:
             conta_auth = self.login(cliente, True)
@@ -237,10 +233,10 @@ class Conta(Agencia):
         elif conta_auth['saldo'] < valor_saque:
             print("Saldo insuficiente para este saque.")
         else:
-            print('===='*10)
+            print('=='*20)
             print("Autenticação realizada com sucesso!")
             print("Efetuando saque solicitado...")
-            print('===='*10)
+            print('=='*20)
             # Obtem historico para determinar limite de saques diarios
             historico = UTILS.str_para_mapa(conta_auth['historico'])
             historico_saques = UTILS.filtro_extrato(historico, 'Saque')
@@ -260,7 +256,7 @@ class Conta(Agencia):
                         )
                     con.commit()
             
-            print('=*='*10)
+            print('=='*20)
             # Realiza o saque subtraindo o valor solicitado do saldo no bd
             query.execute('''
                  UPDATE contas SET saldo = saldo - ?, saques_dia = saques_dia + 1 WHERE id = ? AND agencia = ?
@@ -292,7 +288,7 @@ class Conta(Agencia):
         
     def extrato(self, cliente:Cliente=None, conta_auth=None):
 
-        print('===='*10)
+        print('=='*20)
         print("Validando infomações do usúario...")
         try:
             conta_auth = self.login(cliente, True)
@@ -308,13 +304,13 @@ class Conta(Agencia):
         if conta_auth is None:
             print("Conta não autenticada. Faça login primeiro.")
         else:
-            print('===='*10)
+            print('=='*20)
             print("Autenticação realizada com sucesso!")
-            print('===='*10)
+            print('=='*20)
         
         print(f'Saldo atual: R$ {conta_auth["saldo"]:.2f}')
-        print('===='*10)
+        print('=='*20)
         print(UTILS.str_para_mapa(conta_auth['historico']))
-        print('===='*10)
+        print('=='*20)
 
         return conta_auth

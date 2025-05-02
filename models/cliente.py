@@ -1,4 +1,3 @@
-from data.conexao_bd import DadosBanco
 from controller.banco_controler import Controle
 
 class Cliente:
