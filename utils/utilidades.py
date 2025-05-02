@@ -67,7 +67,7 @@ class Utils:
   @staticmethod
   def tupla_para_dicionario(tupla):
      chaves = [
-    "id", "agencia", "nome", "senha", "saldo", "status", 
+    "id", "agencia", "nome", "senha", "saldo", "saques_dia", 
     "data_nascimento", "cpf", "endereco", "historico"
 ]
      dicionario = dict(zip(chaves, tupla))
