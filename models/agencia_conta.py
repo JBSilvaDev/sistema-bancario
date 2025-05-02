@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from calendar import c
 from http import client
 from data.conexao_bd import DadosBanco
-from view.cliente import Cliente
+from models.cliente import Cliente
 from controller.banco_controler import Controle
 from utils.utilidades import Utils
 
