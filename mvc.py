@@ -10,15 +10,15 @@ from view.visualizacao import user_interface, conta_cliente,deposito, saque
 
 
 # cliente = Cliente('Lucas', '30/05/1991', 'Rua A, 123',cpf='00', senha='00')
-cliente = Cliente(cpf='00', senha='00')
-conta = Conta()
-auth = conta.login(cliente)
+# cliente = Cliente(cpf='456', senha='00')
+# conta = Conta()
+# auth = conta.login(cliente)
 # conta.criar_conta()
 # conta = Conta()
 # conta.depositar('0001', 2, 587.15)
 # conta.sacar(valor_saque=100, conta_auth=conta_auth)
-# user_interface()
+user_interface()
 # deposito(auth=auth)
-saque(auth=auth)
+# saque(cpf='456', senha='00')
 
 

@@ -34,7 +34,6 @@ def cria_nova_conta(cpf, senha):
   rua_nome = input('Digite o nome da rua: ')
   rua_numero = input('Digite o número de sua casa: ')
   endereco = f"{rua_nome}, {rua_numero}, {bairro} - {cidade}/{estado}"
-
   cliente = Cliente(nome, nascimento, endereco, cpf=cpf, senha=senha)
   obj_conta = Conta(cliente=cliente)
   auth = obj_conta.criar_conta()
@@ -49,12 +48,29 @@ def conta_cliente(cpf=None, senha=None):
     obj_conta = Conta()
   return obj_conta
 
-
-def deposito(cpf=None, senha=None, auth=None):
+def login():
+  cpf = input('Digite seu CPF (apenas números): ')
+  if verificar_cpf_existe(cpf) is not None:
+    senha = input('Digite sua senha: ')
+    obj_conta = conta_cliente(cpf, senha)
+    auth = obj_conta.login(cliente=Cliente(cpf=cpf, senha=senha))
+    print('*'*15)
+  else:
+    print('CPF não cadastrado')
+    print('=='*15)
+    resposta = input('Deseja criar nova conta? (s/n): ')
+    if resposta == 'n':
+      return None
+    else:
+        senha = input('Digite a senha de acesso: ')
+        auth = cria_nova_conta(cpf, senha)
+  return auth
+def deposito(auth=None):
 
   tipo_deposito = None
   agencia = None
   cont_numero = None
+  print(auth)
 
   if auth is not None:
     tipo_deposito = input('Deposito para sua conta ou de terceiros? \n 1 - Minha conta \n 2 - Conta de terceiros \n R => ')
@@ -77,59 +93,56 @@ def deposito(cpf=None, senha=None, auth=None):
     obj_conta.depositar(agencia, cont_numero, deposito_valor)
     return auth
 
+def saque(auth=None):
+  if auth is not None:
+    saque_valor = float(input('Digite o valor a sacar: '))
+    obj_conta = conta_cliente()
+    auth = obj_conta.sacar(valor_saque=saque_valor,conta_auth=auth)
+    return auth
 
 
-
+def opcoes_usuario(resposta='s'):
+    if resposta =='n':
+        opcoes = '''
+        0 - Login
+        1 - Depositar
+        4 - Sair
+        '''
+    else:
+        opcoes = '''
+        1 - Depositar
+        2 - Sacar
+        3 - Extrato
+        4 - Sair
+        '''
+    return opcoes
 
 def user_interface():
-  cpf = input('Digite seu CPF (apenas números): ')
   senha = None
   auth = None
-  resposta = None
-  obj_conta = None
-  print('=='*15)
-  if verificar_cpf_existe(cpf) is not None:
-      senha = input('Digite sua senha: ')
-      obj_conta = conta_cliente(cpf, senha)
-      auth = obj_conta.login(cliente=Cliente(cpf=cpf, senha=senha))
-  else:
-      print('CPF não cadastrado')
-      print('=='*15)
-      resposta = input('Deseja criar nova conta? (s/n): ')
-      if resposta == 'n':
-        pass
-      else:
-        senha = input('Digite a senha de acesso: ')
-        auth = cria_nova_conta(cpf, senha)
-  print('=='*15)
+  inicio = input('Bem vindo ao Banco JBCASH! \nDeseja fazer login? (s/n): ')
+  resposta = inicio
 
+  if inicio == 's':
+    print('=='*15)
+    auth = login()
+    print('=='*15)
+  
   loop = True
-  opcoes = '''
-    1 - Depositar
-    2 - Sacar
-    3 - Extrato
-    4 - Sair
-    '''
-  if resposta =='n':
-    opcoes = '''
-    0 - Login
-    1 - Depositar
-    4 - Sair
-    '''
 
   while loop:
-    print(opcoes)
-    
-    
+ 
+    print(opcoes_usuario(resposta))
+
     opcao = input('Escolha uma opção: ')
     if opcao == '0':
-      obj_conta = conta_cliente(cpf, senha)
-      auth = cria_nova_conta(cpf, senha)
+      auth = login()
+      resposta = 's'
     elif opcao == '1':
-      auth = deposito(cpf, senha, auth)
+      auth = deposito(auth)
     elif opcao == '4':
       loop = False
     elif opcao == '2':
-      parent_process
+      auth = saque(auth)
       # conta = saque(cpf, senha, conta)
 

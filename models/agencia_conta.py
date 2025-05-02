@@ -100,6 +100,7 @@ class Conta(Agencia):
         senha = cliente.senha
         con = self.conectar_bd
         query = con.cursor()
+        print(cpf, senha,'*'*15)
 
         try:
             query.execute('''
@@ -109,7 +110,9 @@ class Conta(Agencia):
                         (cpf, senha)
                         )
             
+            
             conta = UTILS.tupla_para_dicionario(query.fetchone())
+            print('*'*15)
             if not conta is None:
                 if not e_reload:
                     print(f'Bem-vindo(a) {conta["nome"]}!')
@@ -277,11 +280,11 @@ class Conta(Agencia):
                 ''', 
                 (att_historico, conta_auth['id'], conta_auth['agencia']))
             
+            con.commit()
             recarrega_conta = self.login(cliente, True)
             conta_auth = recarrega_conta
             print(f'Saldo atual: R$ {conta_auth["saldo"]:.2f}')
 
-            con.commit()
             query.close()
             con.close()
             return conta_auth

@@ -71,5 +71,6 @@ class Utils:
     "data_nascimento", "cpf", "endereco", "historico"
 ]
      dicionario = dict(zip(chaves, tupla))
+     print(dicionario)
      return dicionario
   
