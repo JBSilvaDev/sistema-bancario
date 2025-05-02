@@ -249,7 +249,7 @@ class Conta(Agencia):
                 # Se limite tiver atingido, verifica se a ultima data de saque é hoje
                 if UTILS.compara_datas(historico_saques['Data/Hora'].to_list()[-1]):
                     print('Limite de saques diários atingido.')
-                    return
+                    return conta_auth
                 # Se o limite for atingido e a data for diferente de hoje, recomeça a contagem
                 else:
                     query.execute(

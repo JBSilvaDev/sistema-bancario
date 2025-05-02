@@ -70,7 +70,6 @@ def deposito(auth=None):
   tipo_deposito = None
   agencia = None
   cont_numero = None
-  print(auth)
 
   if auth is not None:
     tipo_deposito = input('Deposito para sua conta ou de terceiros? \n 1 - Minha conta \n 2 - Conta de terceiros \n R => ')
@@ -106,11 +105,11 @@ def extrato(auth=None):
     auth = obj_conta.extrato(conta_auth=auth)
     return auth
 
-def opcoes_usuario(resposta='s'):
-    if resposta =='n':
+def opcoes_usuario(auth=None):
+    if auth is None:
         opcoes = '''
         0 - Login
-        1 - Depositar
+        1 - Depositar (sem login)
         4 - Sair
         '''
     else:
@@ -137,12 +136,11 @@ def user_interface():
 
   while loop:
  
-    print(opcoes_usuario(resposta))
+    print(opcoes_usuario(auth))
 
     opcao = input('Escolha uma opção: ')
     if opcao == '0':
       auth = login()
-      resposta = 's'
     elif opcao == '1':
       auth = deposito(auth)
     elif opcao == '2':
@@ -151,5 +149,5 @@ def user_interface():
       auth = extrato(auth)
     elif opcao == '4':
       loop = False
-      # conta = saque(cpf, senha, conta)
+      
 
