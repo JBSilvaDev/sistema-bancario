@@ -291,8 +291,6 @@ class Conta(Agencia):
 
         
     def extrato(self, cliente:Cliente=None, conta_auth=None):
-        con = self.conectar_bd
-        query = con.cursor()
 
         print('===='*10)
         print("Validando infomações do usúario...")

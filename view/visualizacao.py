@@ -100,6 +100,11 @@ def saque(auth=None):
     auth = obj_conta.sacar(valor_saque=saque_valor,conta_auth=auth)
     return auth
 
+def extrato(auth=None):
+  if auth is not None:
+    obj_conta = conta_cliente()
+    auth = obj_conta.extrato(conta_auth=auth)
+    return auth
 
 def opcoes_usuario(resposta='s'):
     if resposta =='n':
@@ -140,9 +145,11 @@ def user_interface():
       resposta = 's'
     elif opcao == '1':
       auth = deposito(auth)
-    elif opcao == '4':
-      loop = False
     elif opcao == '2':
       auth = saque(auth)
+    elif opcao == '3':
+      auth = extrato(auth)
+    elif opcao == '4':
+      loop = False
       # conta = saque(cpf, senha, conta)
 
