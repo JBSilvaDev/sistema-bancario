@@ -7,7 +7,8 @@ conta = Conta(cliente)
 # conta.criar_conta()
 conta_auth = conta.login(cliente=cliente)
 # conta.depositar('0001', 1, 587.15, conta_auth=conta_auth)
-conta.sacar(valor_saque=100, conta_auth=conta_auth)
+# conta.sacar(valor_saque=100, conta_auth=conta_auth)
+conta.extrato(conta_auth=conta_auth)
 
 
 

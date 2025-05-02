@@ -209,7 +209,6 @@ class Conta(Agencia):
 
         print('===='*10)
         print("Validando infomações de saque...")
-        print('===='*10)
         try:
             conta_auth = self.login(cliente, True)
         except:
@@ -234,7 +233,7 @@ class Conta(Agencia):
             print('===='*10)
             # Obtem historico para determinar limite de saques diarios
             historico = UTILS.str_para_mapa(conta_auth['historico'])
-            historico_saques = UTILS.filtro_extrato(historico, 'Depósito')
+            historico_saques = UTILS.filtro_extrato(historico, 'Saque')
             # Verifica se a conta atingiu o limite de saques diários
             if conta_auth['saques_dia'] >= 5:
                 # Se limite tiver atingido, verifica se a ultima data de saque é hoje
@@ -281,3 +280,33 @@ class Conta(Agencia):
             return conta_auth
 
         
+    def extrato(self, cliente:Cliente=None, conta_auth=None):
+        con = self.conectar_bd
+        query = con.cursor()
+
+        print('===='*10)
+        print("Validando infomações do usúario...")
+        try:
+            conta_auth = self.login(cliente, True)
+        except:
+            pass
+
+        if cliente==None:
+            try:
+                cliente = Cliente(cpf=conta_auth['cpf'], senha=conta_auth['senha'])
+            except:
+                print('Autenticação atual falhou, refaça o login.')     
+
+        if conta_auth is None:
+            print("Conta não autenticada. Faça login primeiro.")
+        else:
+            print('===='*10)
+            print("Autenticação realizada com sucesso!")
+            print('===='*10)
+        
+        print(f'Saldo atual: R$ {conta_auth["saldo"]:.2f}')
+        print('===='*10)
+        print(UTILS.str_para_mapa(conta_auth['historico']))
+        print('===='*10)
+
+        return conta_auth
