@@ -21,7 +21,7 @@ class Agencia(ABC):
 
 class Conta(Agencia):
     
-    def __init__(self, cliente:Cliente):
+    def __init__(self, cliente:Cliente=None):
         super().__init__()
         self.cliente = cliente
         
@@ -91,7 +91,7 @@ class Conta(Agencia):
             con.commit()
             query.close()
             con.close()
-            self.login(Cliente(cpf=conta['cpf'], senha=conta['senha']))
+            return self.login(Cliente(cpf=conta['cpf'], senha=conta['senha']))
             
 
 
@@ -125,29 +125,37 @@ class Conta(Agencia):
             con.close()
 
     def depositar(self, agencia, conta_numero, valor_deposito, /, *,cliente:Cliente=None, conta_auth=None):
-        # conta_auth = None
         con = self.conectar_bd
         query = con.cursor()
 
         try:
-            conta_auth = self.login(cliente, True)
+            conta_auth = self.login(cliente, True) 
         except:
-            pass
+            conta_auth = conta_auth
 
-        if cliente==None:
+        if cliente==None and conta_auth is not None:
             try:
                 cliente = Cliente(cpf=conta_auth['cpf'], senha=conta_auth['senha'])
             except:
                 print('Autenticação atual falhou, refaça o login.')
 
-        try:  
-            query.execute(
-                    '''
-                    SELECT historico FROM contas WHERE id = ? AND agencia = ?
-                    ''',
-                    (conta_numero, agencia)
-                    )
-            historico = UTILS.texto_json(query.fetchone()[0])
+        try:
+            if  not (agencia is None or conta_numero is None):
+                query.execute(
+                        '''
+                        SELECT historico FROM contas WHERE id = ? AND agencia = ?
+                        ''',
+                        (conta_numero, agencia)
+                        )
+            else:
+                query.execute(
+                        '''
+                        SELECT historico FROM contas WHERE id = ? AND agencia = ?
+                        ''',
+                        (conta_auth['id'], conta_auth['agencia'])
+                        )
+             
+            historico = UTILS.texto_json(query.fetchone()[0]) 
             if conta_auth is None:
                 print('Depósito sem autenticação...')
                 if valor_deposito <= 0:
@@ -157,7 +165,6 @@ class Conta(Agencia):
                     {f'Depósito - {valor_deposito:.2f}': UTILS.data_para_iso()}
                     )
                 novo_historico = UTILS.mapa_para_str(historico)
-
                 query.execute(
                     '''
                     UPDATE contas SET 
@@ -171,7 +178,6 @@ class Conta(Agencia):
                 print(f'Depósito de R$ {valor_deposito:.2f} realizado com sucesso!')
 
             elif conta_auth:
-                print('=*='*10) 
                 if valor_deposito <= 0:
                     print('Valor de depósito inválido.')
                     return ValueError('Valor de depósito inválido.')
@@ -179,7 +185,8 @@ class Conta(Agencia):
                     {f'Depósito - {valor_deposito:.2f}': UTILS.data_para_iso()}
                     )
                 novo_historico = UTILS.mapa_para_str(historico)
-
+                print('***'*10)
+                print((valor_deposito, novo_historico, conta_numero, agencia,))
                 query.execute(
                     '''
                     UPDATE contas SET 
