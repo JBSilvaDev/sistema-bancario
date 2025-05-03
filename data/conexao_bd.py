@@ -8,6 +8,7 @@ class DadosBanco:
     self.cria_tabela()
 
   def cria_tabela(self):
+    ''' Cria uma tabela caso ela nao exista com as informações necessarias '''
     self.querys.execute('''
                 CREATE TABLE IF NOT EXISTS contas (
                   id INTEGER PRIMARY KEY AUTOINCREMENT, 
@@ -25,5 +26,6 @@ class DadosBanco:
     self.con.commit()
 
   def conectar_bd(self):
+    '''Faz a conexao com o banco de dados, tabela contas'''
     con = self.con
     return con

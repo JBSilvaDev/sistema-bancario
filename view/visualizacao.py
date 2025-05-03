@@ -4,6 +4,7 @@ from data.conexao_bd import DadosBanco
 from models.agencia_conta import Conta
 
 def verificar_cpf_existe(cpf):
+    """Verifica se o CPF existe na base de dados."""
     banco = DadosBanco()
     con = banco.conectar_bd() 
     query = con.cursor()
@@ -38,6 +39,7 @@ def cria_nova_conta(cpf, senha):
   return auth
 
 def conta_cliente(cpf=None, senha=None):
+  """Retorna o objeto Conta com ou sem autenticação."""
   try:
     cliente = Cliente(cpf=cpf, senha=senha)
     obj_conta = Conta(cliente)
@@ -46,6 +48,7 @@ def conta_cliente(cpf=None, senha=None):
   return obj_conta
 
 def login():
+  """Faz login de usuário existentes no banco de dados."""
   cpf = input('Digite seu CPF (apenas números): ')
   if verificar_cpf_existe(cpf) is not None:
     senha = input('Digite sua senha: ')
@@ -64,7 +67,7 @@ def login():
   return auth
 
 def deposito(auth=None):
-
+  """Deposita dinheiro na conta do usuário locado ou de terceiros."""
   tipo_deposito = None
   agencia = None
   cont_numero = None
@@ -92,6 +95,7 @@ def deposito(auth=None):
     return auth
 
 def saque(auth=None):
+  """Saca dinheiro da conta do usuário locado respeitando o limite diário"""
   if auth is not None:
     saque_valor = float(input('Digite o valor a sacar: '))
     obj_conta = conta_cliente()
@@ -99,12 +103,14 @@ def saque(auth=None):
     return auth
 
 def extrato(auth=None):
+  """Retorna uma tabela com o extrato da conta do usuário locado"""
   if auth is not None:
     obj_conta = conta_cliente()
     auth = obj_conta.extrato(conta_auth=auth)
     return auth
 
 def opcoes_usuario(auth=None):
+    '''Retorna opções ao usuario dependendo se ele esta logado ou nao'''
     if auth is None:
         opcoes = '''
         0 - Login
@@ -121,10 +127,12 @@ def opcoes_usuario(auth=None):
     return opcoes
 
 def user_interface():
-  senha = None
+  """
+  Loop principal do programa.
+  Realiza ação de acordo com a opção escolhida pelo usuário.
+  """
   auth = None
-  inicio = input('Bem vindo ao Banco JBCASH! \nDeseja fazer login? (s/n): ')
-  resposta = inicio
+  inicio = input('Bem vindo ao Banco JBCASH! \nDeseja fazer login ou criar uma nova conta? (s/n): ')
 
   if inicio == 's':
     print('=='*20)
@@ -134,7 +142,8 @@ def user_interface():
   loop = True
 
   while loop:
- 
+    
+    
     print(opcoes_usuario(auth))
 
     opcao = input('Escolha uma opção: ')
