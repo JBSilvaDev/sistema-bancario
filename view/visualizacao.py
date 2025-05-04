@@ -2,6 +2,7 @@ from models.agencia_conta import Conta
 from models.cliente import Cliente
 from data.conexao_bd import DadosBanco
 from models.agencia_conta import Conta
+from console_msg_jb.alert_msgs import *
 
 def verificar_cpf_existe(cpf):
     """Verifica se o CPF existe na base de dados."""
@@ -56,7 +57,7 @@ def login():
     auth = obj_conta.login(cliente=Cliente(cpf=cpf, senha=senha))
     print('=='*20)
   else:
-    print('CPF não cadastrado')
+    almsg('CPF não cadastrado')
     print('=='*20)
     resposta = input('Deseja criar nova conta? (s/n): ')
     if resposta == 'n':
@@ -132,7 +133,8 @@ def user_interface():
   Realiza ação de acordo com a opção escolhida pelo usuário.
   """
   auth = None
-  inicio = input('Bem vindo ao Banco JBCASH! \nDeseja fazer login ou criar uma nova conta? (s/n): ')
+  imsg("Bem vindo ao Banco JBCASH!", BGColor.WHITE)
+  inicio = input('Deseja fazer login ou criar uma nova conta? (s/n): ')
 
   if inicio == 's':
     print('=='*20)
@@ -157,7 +159,7 @@ def user_interface():
       auth = extrato(auth)
     elif opcao == '4':
       print('=='*20)
-      print("Obrigado pela visita! Volte sempre!")
+      smsg("Obrigado pela visita! Volte sempre!", BGColor.WHITE)
       print('=='*20)
       loop = False
       

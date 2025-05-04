@@ -3,6 +3,7 @@ from controller.banco_controler import Controle
 from data.conexao_bd import DadosBanco
 from models.cliente import Cliente
 from utils.utilidades import Utils
+from console_msg_jb.alert_msgs import *
 
 
 UTILS = Utils()
@@ -41,7 +42,7 @@ class Conta(Agencia):
         # Faz a validação dos dados passados antes de criar a conta
         validacao_cliente = self.cliente.validacao_cliente()
         if isinstance(validacao_cliente, Exception):
-            print("Erro na validação:", validacao_cliente)
+            emsg(f"Erro na validação: {validacao_cliente}")
 
         # Se a validação for bem sucedida, tenta adicionar um novo registro na tabela com historico de criação de conta
         if validacao_cliente == True:
@@ -68,10 +69,10 @@ class Conta(Agencia):
             # Caso falhe a criação, retorna erro, e verifica se o erro é de duplicidade no CPF
             except Exception as e:
                 if "UNIQUE constraint failed" in str(e):
-                    print("CPF já cadastrado.")
+                    almsg("CPF já cadastrado.")
                     return
                 else:
-                    print("Erro ao criar conta:", e)
+                    emsg(f"Erro ao criar conta: {e}")
                     return
 
             # Obtem o ultimo id registrado na tabela
@@ -86,7 +87,7 @@ class Conta(Agencia):
             )
 
             conta = UTILS.tupla_para_dicionario(query.fetchone())
-            print(
+            smsg(
                 f'Conta criada com sucesso!, agencia: {conta["agencia"]}, conta: {conta['id']}'
             )
 
@@ -116,14 +117,14 @@ class Conta(Agencia):
             # Se o login for bem sucedido, retorna os dados da conta
             if not conta is None:
                 if not e_reload:
-                    print(f'Bem-vindo(a) {conta["nome"]}!')
+                    imsg(f'Bem-vindo(a) {conta["nome"]}!')
                 return conta
             else:
-                print("Conta inexistente ou senha incorreta.")
+                emsg("Conta inexistente ou senha incorreta.")
                 return None
         # Caso falhe o login, retorna erro
         except Exception as e:
-            print(f"Autenticação atual falhou, refaça o login.\n {e}")
+            emsg(f"Autenticação atual falhou, refaça o login.\n {e}")
             return None
         finally:
             query.close()
@@ -141,7 +142,7 @@ class Conta(Agencia):
             try:
                 cliente = Cliente(cpf=conta_auth["cpf"], senha=conta_auth["senha"])
             except:
-                print("Autenticação atual falhou, refaça o login.")
+                emsg("Autenticação atual falhou, refaça o login.")
 
         try:
             # Obtem o historico da conta passada usando agencia e conta
@@ -164,12 +165,12 @@ class Conta(Agencia):
             historico = UTILS.texto_json(query.fetchone()[0])
             # Realiza o deposito sem autenticação de usuário e atualiza o historico da conta que recebeu o deposito
             if conta_auth is None:
-                print("Depósito sem autenticação...")
+                imsg("Depósito sem autenticação...")
                 # Valida o valor a ser depositado
                 try:
                     CONTROLE.valida_deposito(valor_deposito)
                 except ValueError as e:
-                    print(e)
+                    emsg(e)
                     return conta_auth
 
                 # Atualiza o historico da conta do usuario que recebe o deposito
@@ -192,7 +193,7 @@ class Conta(Agencia):
                     ),
                 )
                 con.commit()
-                print(f"Depósito de R$ {valor_deposito:.2f} realizado com sucesso!")
+                smsg(f"Depósito de R$ {valor_deposito:.2f} realizado com sucesso!")
 
             # Realiza o deposito com autenticação de usuário e atualiza o historico da conta
             elif conta_auth:
@@ -200,7 +201,7 @@ class Conta(Agencia):
                 try:
                     CONTROLE.valida_deposito(valor_deposito)
                 except ValueError as e:
-                    print(e)
+                    emsg(e)
                     return conta_auth
 
                 # Atualiza o historico da conta
@@ -224,17 +225,17 @@ class Conta(Agencia):
                     ),
                 )
                 con.commit()
-                print(f"Depósito de R$ {valor_deposito:.2f} realizado com sucesso!")
+                smsg(f"Depósito de R$ {valor_deposito:.2f} realizado com sucesso!")
                 print("==" * 20)
                 # Atualiza o auth para retornar um historico e saldo atualizados
                 recarrega_conta = self.login(cliente, True)
                 conta_auth = recarrega_conta
-                print(f"Saldo atual: R$ {recarrega_conta['saldo']:.2f}")
+                imsg(f"Saldo atual: R$ {recarrega_conta['saldo']:.2f}")
                 return conta_auth
 
         except Exception as e:
-            print("Não foi possivel realizar depósito")
-            print("Verifique se os dados foram digitados corretamente.\n", e)
+            emsg("Não foi possivel realizar depósito")
+            emsg(f"Verifique se os dados foram digitados corretamente.\n {e}")
         finally:
             query.close()
             con.close()
@@ -246,7 +247,7 @@ class Conta(Agencia):
         cliente: Cliente = None
 
         print("==" * 20)
-        print("Validando infomações de saque...")
+        imsg("Validando infomações de saque...")
 
         # Cria um cliente com os dados do auth passado
         # Esta variavel é usada para atualizar os dados do cliente chamando a função de login
@@ -254,19 +255,19 @@ class Conta(Agencia):
             try:
                 cliente = Cliente(cpf=conta_auth["cpf"], senha=conta_auth["senha"])
             except:
-                print("Autenticação atual falhou, refaça o login.")
+                emsg("Autenticação atual falhou, refaça o login.")
 
         # Valida saque a ser realizado
         try:
             CONTROLE.valida_saque(valor_saque, conta_auth)
             pass
         except ValueError as e:
-            print(e)
+            emsg(e)
             return conta_auth
 
         print("==" * 20)
-        print("Autenticação realizada com sucesso!")
-        print("Efetuando saque solicitado...")
+        smsg("Autenticação realizada com sucesso!")
+        imsg("Efetuando saque solicitado...")
         print("==" * 20)
 
         # Obtem historico para determinar limite de saques diarios
@@ -277,7 +278,7 @@ class Conta(Agencia):
         if conta_auth["saques_dia"] >= 5:
             # Se limite tiver atingido, verifica se a ultima data de saque é hoje
             if UTILS.compara_datas(historico_saques["Data/Hora"].to_list()[-1]):
-                print("Limite de saques diários atingido.")
+                almsg("Limite de saques diários atingido.")
                 return conta_auth
 
             # Se o limite for atingido e a data for diferente de hoje, recomeça a contagem
@@ -300,7 +301,7 @@ class Conta(Agencia):
             (valor_saque, conta_auth["id"], conta_auth["agencia"]),
         )
         con.commit()
-        print(f"Saque de R$ {valor_saque:.2f} realizado com sucesso!")
+        smsg(f"Saque de R$ {valor_saque:.2f} realizado com sucesso!")
 
         # Obtem historico de saques e adicona o saque realizado ao extrato
         historico_dict = UTILS.texto_json(conta_auth["historico"])
@@ -317,7 +318,7 @@ class Conta(Agencia):
         con.commit()
         recarrega_conta = self.login(cliente, True)
         conta_auth = recarrega_conta
-        print(f'Saldo atual: R$ {conta_auth["saldo"]:.2f}')
+        imsg(f'Saldo atual: R$ {conta_auth["saldo"]:.2f}')
 
         query.close()
         con.close()
@@ -326,16 +327,16 @@ class Conta(Agencia):
     def extrato(self, conta_auth=None):
         """Função principal para visualizar o extrato da conta, usuario precisa estar autenticado"""
         print("==" * 20)
-        print("Validando infomações do usúario...")
+        imsg("Validando infomações do usúario...")
 
         if conta_auth is None:
-            print("Conta não autenticada. Faça login primeiro.")
+            almsg("Conta não autenticada. Faça login primeiro.")
         else:
             print("==" * 20)
-            print("Autenticação realizada com sucesso!")
+            smsg("Autenticação realizada com sucesso!")
             print("==" * 20)
 
-        print(f'Saldo atual: R$ {conta_auth["saldo"]:.2f}')
+        imsg(f'Saldo atual: R$ {conta_auth["saldo"]:.2f}')
 
         # Exibe a tabela com movimentações da conta
         print("==" * 20)
